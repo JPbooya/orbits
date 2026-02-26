@@ -8,6 +8,7 @@
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
+#include "movement.h"
 
 // A scaling factor by which to reduce the force applied when orbiting
 // Important for numerical stability
@@ -19,35 +20,12 @@ static constexpr int MAX_ORBITERS = 30;
 // Default starting posiiton and velocity for Orbiter
 static constexpr bn::fixed_point ORBITER_START_POSIITON = {0, 0};
 static constexpr bn::fixed_point ORBITER_START_VELOCITY = {0, 5};
+/* declerations before implementations:
 
-/**
- * Moves sprite up/down/left/right based on the d-pad being held.
- * 
- * Dimensions are moved independently, meaning that diagonal motion is faster than moving in one
- * dimension.
- * 
- * @param sprite the sprite to move
- * @param speed the speed at which to move the sprite in each dimension
- */
-void dPadMoveSprite(bn::sprite_ptr& sprite, bn::fixed speed) {
-    bn::fixed dx = 0;
-    bn::fixed dy = 0;
+void dPadMoveSprite(bn::sprite_ptr& sprite, bn::fixed speed);
 
-    if(bn::keypad::left_held()) {
-        dx -= speed;
-    }
-    if(bn::keypad::right_held()) {
-        dx += speed;
-    }
-    if(bn::keypad::up_held()) {
-        dy -= speed;
-    }
-    if(bn::keypad::down_held()) {
-        dy += speed;
-    }
+Implements later too get exisiting fucntions too work */
 
-    sprite.set_position(sprite.position() + bn::fixed_point(dx, dy));
-}
 
 /**
  * A center of mass to be orbited around. Position is controlled by the player.
@@ -61,6 +39,7 @@ class Center {
          * @param mass the mass of the center. The larger the value, the greater the attraction
          * @param speed the speed at which the center moves when the d-pad is held
          */
+        // 
         Center(bn::fixed_point starting_position, bn::fixed mass, bn::fixed speed) : 
             _sprite(bn::sprite_items::square.create_sprite(starting_position)),
             _mass(mass),
@@ -81,12 +60,15 @@ class Center {
         bn::fixed mass() {
             return _mass;
         }
-
+        // private: could not be changed if outisde of class 
+        // instance varibales
     private:
         bn::sprite_ptr _sprite;
         bn::fixed _mass; // the mass of the center. The larger the value, the greater the attraction
         bn::fixed _speed; //the speed at which the center moves when the d-pad is held
 };
+
+
 
 /**
  * An object that orbits around a center. Orbits using Hooke's law, as if attached by a 2D spring.
@@ -126,7 +108,7 @@ class Orbiter {
             // Update the position by taking a step by the velocity vector
             _sprite.set_position(_sprite.position() + _velocity);
         }
-
+        // instance variables 
     private:
         bn::sprite_ptr _sprite;
         bn::fixed_point _velocity;
